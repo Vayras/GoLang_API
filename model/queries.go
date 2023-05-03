@@ -35,3 +35,21 @@ func DeletePersonByID(id int) error {
 	return nil
 
 }
+
+func FindPersonByID(id int) (Person, error) {
+	var person Person
+	result := DB.First(&person, id)
+	if result.Error != nil {
+		return person, result.Error
+	}
+	return person, nil
+}
+
+func FindPersonByNameAndPassword(name string, password string) (Person, error) {
+	var person Person
+	result := DB.Where("name = ? AND password = ?", name, password).First(&person)
+	if result.Error != nil {
+		return person, result.Error
+	}
+	return person, nil
+}

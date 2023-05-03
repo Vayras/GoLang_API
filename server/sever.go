@@ -80,3 +80,67 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("User deleted successfully"))
 }
+
+func PersonFinder(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	idParam := mux.Vars(r)["id"]
+	fmt.Println("Extracted ID parameter:", idParam)
+	idParam = strings.Trim(idParam, "{}")
+
+	num, err := strconv.Atoi(idParam)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	fmt.Println("Converted int:", num)
+
+	person, err := model.FindPersonByID(num)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	personJSON, err := json.Marshal(person)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(personJSON)
+}
+
+func FinderByNameAndPassword(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	nameParam := mux.Vars(r)["name"]
+	fmt.Println("Extracted ID parameter:", nameParam)
+	nameParam = strings.Trim(nameParam, "{}")
+
+	passParam := mux.Vars(r)["password"]
+	fmt.Println("Extracted ID parameter:", passParam)
+	passParam = strings.Trim(passParam, "{}")
+
+	person, err := model.FindPersonByNameAndPassword(nameParam, passParam)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	personJSON, err := json.Marshal(person)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(personJSON)
+}

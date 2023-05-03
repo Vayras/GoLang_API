@@ -16,6 +16,8 @@ func main() {
 	router.HandleFunc("/", server.HandlePeople).Methods("GET")
 	router.HandleFunc("/create", server.HandleCreatePerson).Methods("POST")
 	router.HandleFunc("/delete/{id}", server.DeleteUserHandler).Methods("DELETE")
+	router.HandleFunc("/find/{id}", server.PersonFinder).Methods("GET")
+	router.HandleFunc("/find/{name}/{password}", server.FinderByNameAndPassword).Methods("GET")
 	// Enable CORS for all routes
 	corsRouter := handlers.CORS()(router)
 	http.ListenAndServe(":8080", corsRouter)
