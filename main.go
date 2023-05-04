@@ -18,6 +18,7 @@ func main() {
 	router.HandleFunc("/delete/{id}", server.DeleteUserHandler).Methods("DELETE")
 	router.HandleFunc("/find/{id}", server.PersonFinder).Methods("GET")
 	router.HandleFunc("/find/{name}/{password}", server.FinderByNameAndPassword).Methods("GET")
+	router.HandleFunc("/pagination/{page}/{limit}", server.PaginationHandler).Methods("GET")
 	// Enable CORS for all routes
 	corsRouter := handlers.CORS()(router)
 	http.ListenAndServe(":8080", corsRouter)

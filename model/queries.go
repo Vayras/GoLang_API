@@ -53,3 +53,13 @@ func FindPersonByNameAndPassword(name string, password string) (Person, error) {
 	}
 	return person, nil
 }
+
+func PaginationData(page int, limit int) ([]Person, error) {
+	var people []Person
+	offset := (page - 1) * limit
+	result := DB.Offset(offset).Limit(limit).Find(&people)
+	if result.Error != nil {
+		return people, result.Error
+	}
+	return people, nil
+}

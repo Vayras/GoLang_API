@@ -144,3 +144,51 @@ func FinderByNameAndPassword(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(personJSON)
 }
+
+func PaginationHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	pageParam := mux.Vars(r)["page"]
+	fmt.Println("Extracted ID parameter:", pageParam)
+	pageParam = strings.Trim(pageParam, "{}")
+
+	limitParam := mux.Vars(r)["limit"]
+	fmt.Println("Extracted ID parameter:", limitParam)
+	limitParam = strings.Trim(limitParam, "{}")
+
+	page, err := strconv.Atoi(pageParam)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	limit, err := strconv.Atoi(limitParam)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	fmt.Println("Converted int:", limit)
+
+	people, err := model.PaginationData(page, limit)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	// Convert people to JSON
+	peopleJSON, err := json.Marshal(people)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(peopleJSON)
+}
